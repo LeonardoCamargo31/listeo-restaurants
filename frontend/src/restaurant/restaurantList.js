@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+//A connect()função conecta um componente React a um repositório Redux.
 
 import { getList, showUpdate, showDelete } from './restaurantActions'
 

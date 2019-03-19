@@ -89,4 +89,4 @@ RestaurantForm = reduxForm({ form: 'restaurantForm', destroyOnUnmount: false })(
 
 const mapDispatchToProps = dispatch => bindActionCreators({ init, create }, dispatch)
 
-export default connect(null, mapDispatchToProps)(RestaurantForm)
+export default connect(null, mapDispatchToProps)(RestaurantForm) 

@@ -1,14 +1,14 @@
 import axios from 'axios'
 import {toastr} from 'react-redux-toastr'
-import { reset as resetForm, initialize } from 'redux-form' 
+import { reset as resetForm, initialize } from 'redux-form'
 
 const BASE_URL = 'http://localhost:3001'
 
 
 export function getList() {
-    const request = axios.get(`${BASE_URL}/restaurant`)
+    const request = axios.get(`${BASE_URL}/category`)
     return {
-        type: 'RESTAURANTS_LOAD',
+        type: 'CATEGORIES_LOAD',
         payload: request
     }
 }
@@ -18,7 +18,7 @@ export function create(values) {
     const id = values.id ? values.id : ''
 
     return dispatch => {
-        axios[method](`${BASE_URL}/restaurant/${id}`, values)
+        axios[method](`${BASE_URL}/category/${id}`, values)
             .then(resp => {
                 toastr.success("Sucesso", "Operação Realizada com Sucesso")
                 dispatch(init())
@@ -32,16 +32,16 @@ export function create(values) {
 
 //recebe por parametro o ciclo de pagamento, então vai ter o billingCycle da linha clicada
 export function showUpdate(restaurant) {
-    toastr.info("Info", "Restaurante carregado com sucesso")
-    return initialize('restaurantForm', restaurant)
+    toastr.info("Info", "Categoria carregado com sucesso")
+    return initialize('categoryForm', restaurant)
 }
 
 export function showDelete(restaurant) {
     const id = restaurant.id 
     return dispatch => {
-        axios.delete(`${BASE_URL}/restaurant/${id}`)
+        axios.delete(`${BASE_URL}/category/${id}`)
             .then(resp => {
-                toastr.success("Sucesso", "Restaurante deletado com sucesso!")
+                toastr.success("Sucesso", "Categoria deletado com sucesso!")
                 dispatch(init())
             })
             .catch(errors => {
@@ -51,10 +51,9 @@ export function showDelete(restaurant) {
     }
 }
 
-//nosso formulario no estado inicial
 export function init() {
     return [
         getList(),
-        initialize('restaurantForm')
+        initialize('categoryForm')
     ]
 }

@@ -11864,6 +11864,12 @@ button.mfp-close {
 }
 
 
+#sign-in-dialog .add-listing-section label{
+	color: #707070;
+}
+
+
+
 /* Popup close button*/
 #sign-in-dialog .mfp-close,
 #small-dialog .mfp-close {
@@ -12012,7 +12018,7 @@ button.mfp-close {
 #sign-in-dialog,
 #small-dialog {
 	background: #fff;
-	padding: 40px;
+	padding: 0px;
 	padding-top: 0;
 	text-align: left;
 	max-width: 610px;
@@ -13737,7 +13743,7 @@ img.mfp-img {
 
 	#sign-in-dialog, #small-dialog {
 		background: #fff;
-		padding: 30px;
+		padding: 0px;
 		padding-top: 0;
     }
 

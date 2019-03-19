@@ -1,5 +1,5 @@
 const express = require('express')
-
+const bcrypt = require('bcryptjs')
 const router = express.Router()
 
 var User = require('../models/user');
@@ -27,27 +27,40 @@ router.get('/:idUser', async (req, res) => {
 
 //ok
 router.post('/', async (req, res) => {
-    const user=(req.body)
-    user.create_at=new Date()
-    user.update_at=new Date()
+    const user = (req.body)
+    user.create_at = new Date()
+    user.update_at = new Date()
+
+    //gerando hash
+    user.password = await bcrypt.hash(user.password, 10)
 
     const newUser = new User(user);
-    console.log(newUser)
 
-    User.create(newUser, function (err, user) {
-        if (err) {
-            res.send(err);
+    //verificar se email já existe, caso não exista pode gravar
+    User.validateEmail(user.email, function (err, user) {
+        if (user != null) {
+            return res.send({ error: 'User already exists' })
         }
-        res.json(user);
-    });
+        else {
+            //caso não existe usuario com esse email, ai posso inserir um novo usuario
+            User.create(newUser, function (err, user) {
+                if (err) {
+                    res.send(err);
+                }
+                res.json(user);
+            });
+        }
+    })
 })
+
+
 
 //ok
 router.put('/:idUser', async (req, res) => {
     const idUser = req.params.idUser
 
-    const user=(req.body)
-    user.update_at=new Date()
+    const user = (req.body)
+    user.update_at = new Date()
 
     const newUser = new User(user);
     console.log(newUser)

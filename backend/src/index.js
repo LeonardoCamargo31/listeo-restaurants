@@ -12,5 +12,6 @@ app.use(bodyParser.urlencoded({extended:false}))//para ele entender quando passa
 require('./controllers/restaurantController')(app)
 require('./controllers/categoryController')(app)
 require('./controllers/userController')(app)
+require('./controllers/authController')(app)
 
 app.listen(3001)

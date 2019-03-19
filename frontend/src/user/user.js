@@ -1,68 +1,69 @@
 import React, { Component } from 'react'
-
-//formValueSelector responsavel por pegar um valor dentro do form
-import {reduxForm, Field, formValueSelector} from 'redux-form'
+import { reduxForm, Field, formValueSelector } from 'redux-form'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-//bindActionCreators ele vai pegar o objeto de actions  
-//e vai mapear em forma de propriedades para o nosso componente
 
-//o connect, ele segue um padrão chamado high order component
-//é um pattern do react para compartilhar alguma informação para algum componente 
-
-//esse componente no caso, queremos o estado do redux
-
-// * => importar tudo 
-import {init} from './userActions'
+import TitleBar from '../common/titleBar'
 
 
-import LabelAndInput from '../common/labelAndInput'
+import { init, update ,updatePassword} from './userActions'
+
+const required = value => value ? undefined : 'Campo requerido'
+const maxLength = max => value =>
+    value && value.length > max ? `Deve ter ${max} caracteres ou menos` : undefined
+const maxLength50 = maxLength(50)
+const email = value =>
+    value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
+        'Endereço de email invalido' : undefined
+
+const renderFieldInput = ({ input, label, type, meta: { touched, error, warning } }) => (
+    <div>
+        <label>{label}</label>
+        <div>
+            <input {...input} placeholder={label} type={type} />
+            {touched && ((error && <div className="error">{error}</div>) || (warning && <div className="error">{warning}</div>))}
+        </div>
+    </div>
+)
 
 class User extends Component {
 
+    componentWillMount() {
+
+        this.props.init()
+    }
+
     render() {
+        const { handleSubmit } = this.props
+        const itens = [{ link: '/index', text: 'Home' }]
+
         return (
             <div class="dashboard-content">
-
-                <div id="titlebar">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h2>My Profile</h2>
-                            <nav id="breadcrumbs">
-                                <ul>
-                                    <li><a href="#">Home</a></li>
-                                    <li><a href="#">Dashboard</a></li>
-                                    <li>My Profile</li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
+                <TitleBar title="Meu perfil" itens={itens} current="Meu perfil" />
 
                 <div class="row">
-
                     <div class="col-lg-6 col-md-12">
                         <div class="dashboard-list-box margin-top-0">
                             <h4 class="gray">Profile Details</h4>
                             <div class="dashboard-list-box-static">
-
-                                <div class="edit-profile-photo">
-                                    <img src="assets/images/user-avatar.jpg" alt="" />
-                                    <div class="change-photo-btn">
-                                        <div class="photoUpload">
-                                            <span><i class="fa fa-upload"></i> Upload Photo</span>
-                                            <input type="file" class="upload" />
+                                <form onSubmit={handleSubmit(this.props.update)}>
+                                    <div class="edit-profile-photo">
+                                        <img src="assets/images/user-avatar.jpg" alt="" />
+                                        <div class="change-photo-btn">
+                                            <div class="photoUpload">
+                                                <span><i class="fa fa-upload"></i> Upload Photo</span>
+                                                <input type="file" class="upload" />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="my-profile">
-                                    <Field name="name" component={LabelAndInput} label="Nome" cols="12 4" placeholder="Informe o nome"/>
-                                    <Field name="email" component={LabelAndInput} label="E-mail" cols="12 4" placeholder="Informe o email"/>
-                                </div>
+                                    <div class="my-profile">
+                                        <Field name="name" component={renderFieldInput} label="Nome" placeholder="Informe o nome" validate={[required, maxLength50]} />
+                                        <Field name="email" component={renderFieldInput} label="E-mail" placeholder="Informe o e-mail" validate={[required, email, maxLength50]} />
+                                    </div>
 
-                                <button class="button margin-top-15">Save Changes</button>
-
+                                    <button type="submit" class="button preview">Enviar <i class="fa fa-arrow-circle-right"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -72,16 +73,18 @@ class User extends Component {
                             <h4 class="gray">Change Password</h4>
                             <div class="dashboard-list-box-static">
                                 <div class="my-profile">
-                                    <label class="margin-top-0">Current Password</label>
-                                    <input type="password" />
+                                    <form onSubmit={handleSubmit(this.props.updatePassword)}>
+                                        <label class="margin-top-0">Current Password</label>
+                                        <input type="password" />
 
-                                    <label>New Password</label>
-                                    <input type="password" />
+                                        <label>New Password</label>
+                                        <input type="password" />
 
-                                    <label>Confirm New Password</label>
-                                    <input type="password" />
+                                        <label>Confirm New Password</label>
+                                        <input type="password" />
 
-                                    <button class="button margin-top-15">Change Password</button>
+                                        <button type="submit" class="button preview">Enviar <i class="fa fa-arrow-circle-right"></i></button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -91,16 +94,19 @@ class User extends Component {
                     </div>
 
                 </div>
-
             </div>
         )
     }
 }
 
-User = reduxForm({form: 'billingCycleForm', destroyOnUnmount:false}) (User)
+User = reduxForm({ form: 'UserForm', destroyOnUnmount: false })(User)
+
+
+const mapStateToProps = state => ({ initialValues: state.login.user.user })
+
 
 //com o bindActionCreators
 //ao invés de usar this.props.dispatch(toggleTodo(id)); só usamos
-const mapDispatchToProps = dispatch => bindActionCreators({init}, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators({ init, update ,updatePassword}, dispatch)
 
-export default connect(mapDispatchToProps)(User)
+export default connect(mapStateToProps, mapDispatchToProps)(User)
